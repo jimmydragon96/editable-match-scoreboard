@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Marcador OBS</title>
+    <style>
+        /* Importamos una fuente elegante y deportiva */
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            width: 850px;
+            height: 350px;
+            background: transparent; /* Transparente para OBS */
+            font-family: 'Montserrat', sans-serif;
+            color: white;
+            overflow: hidden;
+        }
+
+        /* Contenedor Principal */
+        .marcador-box {
+            width: 800px;
+            margin: 20px auto;
+            background: rgba(5, 10, 30, 0.9); /* Azul oscuro tipo Champions */
+            border: 2px solid #00d2ff;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(0, 210, 255, 0.5);
+            padding: 15px;
+            box-sizing: border-box;
+        }
+
+        /* Fila del Marcador */
+        .main-score {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: 900;
+            font-size: 32px;
+            border-bottom: 2px solid rgba(255,255,255,0.1);
+            padding-bottom: 10px;
+        }
+
+        .team {
+            width: 35%;
+            text-align: center;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        
+        .team.local { text-align: right; }
+        .team.visitante { text-align: left; }
+
+        .score-number {
+            font-size: 50px;
+            background: #111836;
+            padding: 5px 20px;
+            border-radius: 8px;
+            min-width: 60px;
+            text-align: center;
+            border: 1px solid #00d2ff;
+        }
+
+        .time-box {
+            width: 15%;
+            text-align: center;
+            font-size: 24px;
+            color: #00d2ff;
+            font-weight: 700;
+        }
+
+        /* Fila de Incidencias (Goles/Tarjetas) */
+        .incidencias {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            color: #ccc;
+            height: 100px; /* Espacio fijo para que no se mueva el diseño */
+        }
+
+        .incidencias .bloque {
+            width: 45%;
+            line-height: 1.5;
+        }
+
+        .bloque.local { text-align: right; color: #00d2ff; }
+        .bloque.visitante { text-align: left; color: #e2b31a; }
+    </style>
+</head>
+<body>
+
+<div class="marcador-box">
+    <!-- Marcador Principal -->
+    <div class="main-score">
+        <div class="team local" id="view-equipoL">R. MADRID</div>
+        <div class="score-number" id="view-golesL">0</div>
+        <div class="time-box" id="view-tiempo">00:00</div>
+        <div class="score-number" id="view-golesV">0</div>
+        <div class="team visitante" id="view-equipoV">DORTMUND</div>
+    </div>
+
+    <!-- Goles y Expulsados -->
+    <div class="incidencias">
+        <div class="bloque local" id="view-sucesosL"></div>
+        <div class="bloque visitante" id="view-sucesosV"></div>
+    </div>
+</div>
+
+<script>
+    function cargarDatos() {
+        const dataRaw = localStorage.getItem('marcadorUCL');
+        if (dataRaw) {
+            const data = JSON.parse(dataRaw);
+            document.getElementById('view-equipoL').innerText = data.equipoL;
+            document.getElementById('view-equipoV').innerText = data.equipoV;
+            document.getElementById('view-golesL').innerText = data.golesL;
+            document.getElementById('view-golesV').innerText = data.golesV;
+            document.getElementById('view-tiempo').innerText = data.tiempo;
+            document.getElementById('view-sucesosL').innerHTML = data.sucesosL;
+            document.getElementById('view-sucesosV').innerHTML = data.sucesosV;
+        }
+    }
+
+    // Revisa si hay cambios cada 1 segundo automáticamente
+    setInterval(cargarDatos, 1000);
+    window.onload = cargarDatos;
+</script>
+
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel de Control - Final UCL</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #1a1a2e; color: #fff; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; background: #161625; padding: 20px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        h2 { text-align: center; color: #00d2ff; margin-top: 0; }
+        .row { display: flex; justify-content: space-between; margin-bottom: 15px; gap: 10px; }
+        .field { display: flex; flex-direction: column; flex: 1; }
+        label { font-size: 12px; text-transform: uppercase; color: #888; margin-bottom: 5px; }
+        input, textarea { padding: 8px; background: #222; border: 1px solid #444; color: #fff; border-radius: 4px; }
+        button { padding: 10px; background: #00d2ff; border: none; color: #1a1a2e; font-weight: bold; cursor: pointer; border-radius: 4px; width: 100%; margin-top: 10px; }
+        button:hover { background: #00b4db; }
+        .flex-row { display: flex; gap: 10px; align-items: center; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Control del Marcador - UCL</h2>
+    
+    <div class="row">
+        <div class="field">
+            <label>Equipo Local</label>
+            <input type="text" id="equipoL" value="R. MADRID">
+        </div>
+        <div class="field">
+            <label>Equipo Visitante</label>
+            <input type="text" id="equipoV" value="DORTMUND">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="field">
+            <label>Goles Local</label>
+            <input type="number" id="golesL" value="0" min="0">
+        </div>
+        <div class="field">
+            <label>Goles Visitante</label>
+            <input type="number" id="golesV" value="0" min="0">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="field">
+            <label>Tiempo (ej: 45:00 o 1T)</label>
+            <input type="text" id="tiempo" value="00:00">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="field">
+            <label>Sucesos Local (Goles / Expulsados)</label>
+            <textarea id="sucesosL" rows="3" placeholder="23' Vini Jr. ⚽&#10;41' Bellingham 🟥"></textarea>
+        </div>
+        <div class="field">
+            <label>Sucesos Visitante (Goles / Expulsados)</label>
+            <textarea id="sucesosV" rows="3" placeholder="12' Füllkrug ⚽"></textarea>
+        </div>
+    </div>
+
+    <button onclick="actualizarOBS()">ACTUALIZAR OBS</button>
+</div>
+
+<script>
+    function actualizarOBS() {
+        const data = {
+            equipoL: document.getElementById('equipoL').value,
+            equipoV: document.getElementById('equipoV').value,
+            golesL: document.getElementById('golesL').value,
+            golesV: document.getElementById('golesV').value,
+            tiempo: document.getElementById('tiempo').value,
+            sucesosL: document.getElementById('sucesosL').value.replace(/\n/g, '<br>'),
+            sucesosV: document.getElementById('sucesosV').value.replace(/\n/g, '<br>')
+        };
+        
+        // Guardamos los datos en el navegador
+        localStorage.setItem('marcadorUCL', JSON.stringify(data));
+    }
+    
+    // Guardar automáticamente al cargar por primera vez
+    window.onload = actualizarOBS;
+</script>
+
+</body>
+</html>
