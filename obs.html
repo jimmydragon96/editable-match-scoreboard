@@ -2,84 +2,205 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Marcador OBS</title>
+    <title>Marcador Champions League Premium - OBS</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap');
+        /* Tipografías oficiales del estilo solicitado */
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@400;600;700&display=swap');
 
         body {
             margin: 0;
             padding: 0;
+            background-color: transparent !important; /* Totalmente transparente para OBS */
+            font-family: 'Poppins', sans-serif;
+            color: #ffffff;
+            overflow: hidden;
+            user-select: none; /* Evita selección de texto molesta */
             width: 850px;
             height: 350px;
-            background: transparent;
-            font-family: 'Montserrat', sans-serif;
-            color: white;
-            overflow: hidden;
         }
 
-        .marcador-box {
-            width: 800px;
-            margin: 20px auto;
-            background: rgba(5, 10, 30, 0.9);
-            border: 2px solid #00d2ff;
-            border-radius: 12px;
-            box-shadow: 0 0 20px rgba(0, 210, 255, 0.5);
-            padding: 15px;
+        /* Caja contenedora adaptada a tus medidas (850x350) pero estilizada de forma compacta */
+        .marcador-principal {
+            width: 820px;
+            margin: 15px auto;
+            background: transparent; /* Fondo oscuro muy sutil y elegante */
+            border-radius: 14px;
+            padding: 15px 25px;
             box-sizing: border-box;
         }
 
-        .main-score {
+        /* Fila del Marcador */
+        .scoreboard-container {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            font-weight: 900;
-            font-size: 32px;
-            border-bottom: 2px solid rgba(255,255,255,0.1);
-            padding-bottom: 10px;
         }
 
-        .team { width: 35%; text-spacing: 2px; text-transform: uppercase; }
-        .team.local { text-align: right; }
-        .team.visitante { text-align: left; }
+        /* Estilo para los bloques de los equipos (Simétricos y Proporcionales) */
+        .team-box {
+            display: flex;
+            align-items: center;
+            width: 320px;
+        }
 
-        .score-number {
-            font-size: 50px;
-            background: #111836;
-            padding: 5px 20px;
-            border-radius: 8px;
-            min-width: 60px;
+        .team-box.home {
+            justify-content: flex-end;
+            text-align: right;
+        }
+
+        .team-box.away {
+            justify-content: flex-start;
+            text-align: left;
+        }
+
+        /* Escudos más grandes (Aumentados a 65px) */
+        .escudo-container {
+            width: 100px;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            filter: drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.5));
+        }
+
+        .escudo-container img {
+            width: 100%;
+            height: 100%;
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .team-name {
+            font-size: 36px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .home .team-name { margin-right: 20px; }
+        .away .team-name { margin-left: 20px; }
+
+        /* Contenedor Central: Marcador y Tiempo */
+        .center-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 400px;
+        }
+
+        /* Números con fuente Orbitron y gradiente metálico limpio */
+        .score-display {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 72px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: #ffffff;
+            margin-bottom: 2px;
+        }
+
+        /* Badge dinámico de tiempo */
+        .status-badge {
+            font-size: 13px;
+            font-weight: 700;
+            padding: 4px 14px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #94a3b8;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            min-width: 70px;
             text-align: center;
-            border: 1px solid #00d2ff;
         }
 
-        .time-box { width: 15%; text-align: center; font-size: 24px; color: #00d2ff; font-weight: 700; }
+        /* Parpadeo live si el cronómetro está corriendo */
+        .status-badge.live {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.35);
+            animation: pulse 1.5s infinite;
+        }
 
+        @keyframes pulse {
+            0% { opacity: 0.8; }
+            50% { opacity: 1; }
+            100% { opacity: 0.8; }
+        }
+
+        /* Incidencias Estilizadas */
         .incidencias {
             display: flex;
             justify-content: space-between;
-            margin-top: 12px;
-            font-size: 16px;
-            font-weight: 700;
-            color: #ccc;
-            height: 100px;
+            margin-top: 15px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #94a3b8;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 10px;
+            min-height: 50px;
         }
 
-        .incidencias .bloque { width: 45%; line-height: 1.5; }
-        .bloque.local { text-align: right; color: #00d2ff; }
-        .bloque.visitante { text-align: left; color: #e2b31a; }
+        .incidencias .bloque { width: 42%; line-height: 1.5; }
+        .bloque.local { text-align: right; }
+        .bloque.visitante { text-align: left; }
+
+        /* Tanda de Penales Adaptada */
+        .penales-display {
+            display: none;
+            justify-content: space-between;
+            margin-top: 10px;
+            border-top: 1px dashed rgba(255,255,255,0.15);
+            padding-top: 10px;
+        }
+        .dots-container { display: flex; gap: 8px; width: 45%; }
+        .dots-container.local { justify-content: flex-end; }
+        .dots-container.visitante { justify-content: flex-start; }
+        
+        .dot {
+            width: 16px; height: 16px; border-radius: 50%;
+            background: #334155; display: flex; align-items: center;
+            justify-content: center; font-size: 9px; font-weight: bold;
+        }
+        .dot.success { background: #10b981; color: #0f172a; }
+        .dot.fail { background: #ef4444; color: #ffffff; }
     </style>
 </head>
 <body>
 
-<div class="marcador-box">
-    <div class="main-score">
-        <div class="team local" id="view-equipoL">R. MADRID</div>
-        <div class="score-number" id="view-golesL">0</div>
-        <div class="time-box" id="view-tiempo">00:00</div>
-        <div class="score-number" id="view-golesV">00</div>
-        <div class="team visitante" id="view-equipoV">DORTMUND</div>
+<div class="marcador-principal">
+    <div class="scoreboard-container">
+        <!-- Equipo Local -->
+        <div class="team-box home">
+            <span class="team-name" id="view-siglasL">RMA</span>
+            <div class="escudo-container">
+                <img id="view-escudoL" src="" alt="">
+            </div>
+        </div>
+
+        <!-- Centro: Goles y Tiempo -->
+        <div class="center-box">
+            <div class="score-display"><span id="view-golesL">0</span> - <span id="view-golesV">0</span></div>
+            <div class="status-badge" id="view-tiempo">00:00</div>
+        </div>
+
+        <!-- Equipo Visitante -->
+        <div class="team-box away">
+            <div class="escudo-container">
+                <img id="view-escudoV" src="" alt="">
+            </div>
+            <span class="team-name" id="view-siglasV">BVB</span>
+        </div>
     </div>
 
+    <!-- Tanda de Penales -->
+    <div class="penales-display" id="box-penales">
+        <div class="dots-container local" id="dots-L"></div>
+        <div class="dots-container visitante" id="dots-V"></div>
+    </div>
+
+    <!-- Goles / Tarjetas -->
     <div class="incidencias">
         <div class="bloque local" id="view-sucesosL"></div>
         <div class="bloque visitante" id="view-sucesosV"></div>
@@ -87,28 +208,67 @@
 </div>
 
 <script>
-    async function descargarDatosDesdeNube() {
+    function generarDotsPenales(listaData, contenedorID) {
+        const cont = document.getElementById(contenedorID);
+        cont.innerHTML = "";
+        listaData.forEach(item => {
+            let clase = ""; let marca = "";
+            if(item === "⚽") { clase = "success"; marca = "✓"; }
+            if(item === "❌") { clase = "fail"; marca = "X"; }
+            cont.innerHTML += `<div class="dot ${clase}">${marca}</div>`;
+        });
+    }
+
+    async function actualizarMarcador() {
         try {
-            // El OBS va a leer este archivo JSON en internet cada 2 segundos
-            const respuesta = await fetch(`https://api.npoint.io/e05b58be4af99580a520?nocache=` + new Date().getTime());
+            const respuesta = await fetch('datos_marcador.txt?nocache=' + Math.random());
             if (respuesta.ok) {
-                const data = await respuesta.json();
-                document.getElementById('view-equipoL').innerText = data.equipoL;
-                document.getElementById('view-equipoV').innerText = data.equipoV;
-                document.getElementById('view-golesL').innerText = data.golesL;
-                document.getElementById('view-golesV').innerText = data.golesV;
-                document.getElementById('view-tiempo').innerText = data.tiempo;
-                document.getElementById('view-sucesosL').innerHTML = data.sucesosL;
-                document.getElementById('view-sucesosV').innerHTML = data.sucesosV;
+                const texto = await respuesta.text();
+                if(texto.trim() !== "") {
+                    const data = JSON.parse(texto);
+                    
+                    document.getElementById('view-siglasL').innerText = data.siglasL;
+                    document.getElementById('view-siglasV').innerText = data.siglasV;
+                    document.getElementById('view-golesL').innerText = data.golesL;
+                    document.getElementById('view-golesV').innerText = data.golesV;
+                    
+                    const tiempoBadge = document.getElementById('view-tiempo');
+                    tiempoBadge.innerText = data.tiempo;
+
+                    // Si el tiempo corre o está activo en ciertas fases, añade el efecto parpadeante "Live"
+                    if (data.fase !== "ET" && data.fase !== "FIN" && data.tiempo !== "00:00" && data.tiempo !== "ENTRETIEMPO") {
+                        tiempoBadge.classList.add('live');
+                    } else {
+                        tiempoBadge.classList.remove('live');
+                    }
+
+                    document.getElementById('view-sucesosL').innerHTML = data.sucesosL;
+                    document.getElementById('view-sucesosV').innerHTML = data.sucesosV;
+
+                    if(document.getElementById('view-escudoL').getAttribute('src') !== data.escudoL) {
+                        document.getElementById('view-escudoL').src = data.escudoL;
+                    }
+                    if(document.getElementById('view-escudoV').getAttribute('src') !== data.escudoV) {
+                        document.getElementById('view-escudoV').src = data.escudoV;
+                    }
+
+                    const boxPenales = document.getElementById('box-penales');
+                    if(data.verPenales) {
+                        boxPenales.style.display = "flex";
+                        generarDotsPenales(data.penalesL, 'dots-L');
+                        generarDotsPenales(data.penalesV, 'dots-V');
+                    } else {
+                        boxPenales.style.display = "none";
+                    }
+                }
             }
         } catch (error) {
             console.log("Esperando actualización...");
         }
     }
 
-    // Consulta internet cada 2 segundos
-    setInterval(descargarDatosDesdeNube, 2000);
-    window.onload = descargarDatosDesdeNube;
+    setInterval(actualizarMarcador, 1000);
+    window.onload = actualizarMarcador;
 </script>
 
 </body>
