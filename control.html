@@ -2,43 +2,95 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Panel de Control - Final UCL</title>
+    <title>Panel de Control Pro - UCL</title>
     <style>
-        body { font-family: 'Segoe UI', Arial, sans-serif; background: #1a1a2e; color: #fff; padding: 20px; }
-        .container { max-width: 600px; margin: 0 auto; background: #161625; padding: 20px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-        h2 { text-align: center; color: #00d2ff; margin-top: 0; }
-        .row { display: flex; justify-content: space-between; margin-bottom: 15px; gap: 10px; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #111424; color: #fff; padding: 20px; margin: 0; }
+        .container { max-width: 700px; margin: 0 auto; background: #1a1f38; padding: 25px; border-radius: 12px; box-shadow: 0 6px 20px rgba(0,0,0,0.4); border: 1px solid #2a325a; }
+        h2 { text-align: center; color: #00d2ff; margin-top: 0; font-weight: 700; letter-spacing: 1px; }
+        .row { display: flex; justify-content: space-between; margin-bottom: 15px; gap: 15px; }
         .field { display: flex; flex-direction: column; flex: 1; }
-        label { font-size: 12px; text-transform: uppercase; color: #888; margin-bottom: 5px; }
-        input, textarea { padding: 8px; background: #222; border: 1px solid #444; color: #fff; border-radius: 4px; }
-        button { padding: 12px; background: #00d2ff; border: none; color: #1a1a2e; font-weight: bold; cursor: pointer; border-radius: 4px; width: 100%; margin-top: 10px; font-size: 16px;}
-        button:hover { background: #00b4db; }
-        #status { text-align: center; color: #00ff88; margin-top: 10px; font-size: 14px; font-weight: bold; display: none; }
+        label { font-size: 11px; text-transform: uppercase; color: #8a99ad; margin-bottom: 6px; font-weight: bold; letter-spacing: 0.5px; }
+        input, textarea, select { padding: 10px; background: #0f1220; border: 1px solid #3d4878; color: #fff; border-radius: 6px; font-size: 14px; }
+        input[type="file"] { padding: 6px; font-size: 12px; cursor: pointer; }
+        input:focus, textarea:focus { border-color: #00d2ff; outline: none; }
+        
+        button { padding: 12px; background: #00d2ff; border: none; color: #111424; font-weight: bold; cursor: pointer; border-radius: 6px; width: 100%; font-size: 14px; transition: all 0.2s; }
+        button:hover { background: #00b4db; transform: translateY(-1px); }
+        button:disabled { background: #444 !important; color: #aaa !important; cursor: not-allowed; transform: none; }
+        .btn-conectar { background: #e2b31a; color: #111; margin-bottom: 20px; font-size: 15px; }
+        .btn-conectar:hover { background: #cbb019; }
+        
+        /* Botones de Emojis Rápidos */
+        .emoji-bar {
+            display: flex;
+            gap: 5px;
+            margin-top: 5px;
+        }
+        .btn-emoji {
+            padding: 6px 10px;
+            font-size: 12px;
+            background: #2a325a;
+            color: #fff;
+            border-radius: 4px;
+            width: auto;
+            flex: 1;
+        }
+        .btn-emoji:hover {
+            background: #3d4878;
+        }
+        
+        /* Cronómetro */
+        .crono-box { background: #0f1220; padding: 15px; border-radius: 8px; border: 1px solid #3d4878; margin-bottom: 15px; text-align: center; }
+        #display-crono { font-size: 36px; font-weight: bold; color: #00d2ff; font-family: monospace; margin-bottom: 10px; }
+        .crono-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 8px; }
+        .crono-grid button { padding: 8px; font-size: 12px; background: #2a325a; color: white; }
+        .crono-grid button:hover { background: #3d4878; }
+        .crono-control { display: flex; gap: 8px; }
+        .crono-control button { background: #22a342; color: white; }
+        .crono-control button#btn-pausa { background: #d93838; }
+
+        /* Penales */
+        .penales-box { background: #13172e; padding: 10px; border-radius: 8px; border: 1px solid #3d4878; margin-bottom: 1px; }
+        .penal-fila { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; }
+        .penal-inputs { display: flex; gap: 10px; }
+        .penal-inputs select { padding: 6px; font-size: 12px; background: #0f1220; }
+
+        #btnActualizar { font-size: 16px; background: #00ff88; color: #111424; margin-top: 15px; }
+        #btnActualizar:hover { background: #00dd74; }
+        #status { text-align: center; color: #00ff88; margin-top: 10px; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>Control del Marcador - UCL (Nube)</h2>
+    <h2>Control del Marcador Profesional</h2>
     
-    <!-- IMPORTANTE: Cambia "tu_canal" por tu nombre de usuario o un texto único para que nadie use tu misma sala -->
-    <input type="hidden" id="salaID" value="final_ucl_mi_directo_2026">
+    <button class="btn-conectar" id="btnFile" onclick="vincularArchivo()">VINCULAR ARCHIVO DE TEXTO "TXT"</button>
 
+    <!-- CONFIGURACIÓN DE EQUIPOS -->
     <div class="row">
         <div class="field">
-            <label>Equipo Local</label>
-            <input type="text" id="equipoL" value="R. MADRID">
+            <label>Siglas Local (Ej: FCB)</label>
+            <input type="text" id="siglasL" value="LOC" maxlength="3">
         </div>
         <div class="field">
-            <label>Equipo Visitante</label>
-            <input type="text" id="equipoV" value="DORTMUND">
+            <label>Cargar Escudo Local</label>
+            <input type="file" id="fileEscudoL" accept=".png, .jpg, .jpeg, .svg">
+        </div>
+        <div class="field">
+            <label>Goles Local</label>
+            <input type="number" id="golesL" value="0" min="0">
         </div>
     </div>
 
     <div class="row">
         <div class="field">
-            <label>Goles Local</label>
-            <input type="number" id="golesL" value="0" min="0">
+            <label>Siglas Visitante (Ej: RMA)</label>
+            <input type="text" id="siglasV" value="VIS" maxlength="3">
+        </div>
+        <div class="field">
+            <label>Cargar Escudo Visitante</label>
+            <input type="file" id="fileEscudoV" accept=".png, .jpg, .jpeg, .svg">
         </div>
         <div class="field">
             <label>Goles Visitante</label>
@@ -46,79 +98,195 @@
         </div>
     </div>
 
-    <div class="row">
-        <div class="field">
-            <label>Tiempo (ej: 45:00 o 1T)</label>
-            <input type="text" id="tiempo" value="00:00">
+    <!-- CONTROL DEL TIEMPO -->
+    <div class="crono-box">
+        <label>Control del Tiempo</label>
+        <div id="display-crono">00:00</div>
+        
+        <div class="crono-grid">
+            <button onclick="setTiempo(0, '1T')">1er Tiempo (0')</button>
+            <button onclick="setTiempo(45, 'ET')">Entretiempo (45')</button>
+            <button onclick="setTiempo(45, '2T')">2do Tiempo (45')</button>
+            <button onclick="setTiempo(90, 'TE1')">Prórroga 1 (90')</button>
+            <button onclick="setTiempo(105, 'TE2')">Prórroga 2 (105')</button>
+            <button onclick="finalizarPartido()">Fin Partido</button>
+        </div>
+        <div class="crono-control">
+            <button id="btn-inicio" onclick="iniciarCrono()">INICIAR</button>
+            <button id="btn-pausa" onclick="pausarCrono()">PAUSAR</button>
         </div>
     </div>
 
+    <!-- INCIDENCIAS -->
     <div class="row">
         <div class="field">
-            <label>Sucesos Local (Goles / Expulsados)</label>
-            <textarea id="sucesosL" rows="3" placeholder="23' Vini Jr. ⚽&#10;41' Bellingham 🟥"></textarea>
+            <label>Sucesos Local</label>
+            <textarea id="sucesosL" rows="4" placeholder="23' Nombre Jugador ⚽"></textarea>
+            <!-- Botones rápidos Local -->
+            <div class="emoji-bar">
+                <button type="button" class="btn-emoji" onclick="insertarEmoji('sucesosL', '⚽')">➕ Gol ⚽</button>
+                <button type="button" class="btn-emoji" onclick="insertarEmoji('sucesosL', '🟥')">➕ Roja 🟥</button>
+            </div>
         </div>
         <div class="field">
-            <label>Sucesos Visitante (Goles / Expulsados)</label>
-            <textarea id="sucesosV" rows="3" placeholder="12' Füllkrug ⚽"></textarea>
+            <label>Sucesos Visitante</label>
+            <textarea id="sucesosV" rows="4" placeholder="41' Nombre Jugador 🟥"></textarea>
+            <!-- Botones rápidos Visitante -->
+            <div class="emoji-bar">
+                <button type="button" class="btn-emoji" onclick="insertarEmoji('sucesosV', '⚽')">➕ Gol ⚽</button>
+                <button type="button" class="btn-emoji" onclick="insertarEmoji('sucesosV', '🟥')">➕ Roja 🟥</button>
+            </div>
         </div>
     </div>
 
-    <button onclick="enviarALaNube()">ACTUALIZAR EN VIVO (OBS)</button>
-    <div id="status">¡Enviado a OBS con éxito!</div>
+    <!-- TANDA DE PENALES -->
+    <div class="penales-box">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <label style="margin:0;">Tanda de Penales</label>
+            <label><input type="checkbox" id="mostrarPenales"> Activar en Marcador</label>
+        </div>
+        
+        <div class="penal-fila">
+            <span>Local:</span>
+            <div class="penal-inputs" id="p-local"></div>
+        </div>
+        <div class="penal-fila">
+            <span>Visitante:</span>
+            <div class="penal-inputs" id="p-visitante"></div>
+        </div>
+    </div>
+
+    <button id="btnActualizar" onclick="guardarEnTXT()" disabled style="background:#555; cursor:not-allowed;">2. ACTUALIZAR MARCADOR EN LIVE</button>
+    <div id="status"></div>
 </div>
 
 <script>
-    async function enviarALaNube() {
-        const sala = document.getElementById('salaID').value;
-        const btn = document.querySelector('button');
-        const status = document.getElementById('status');
-        
-        btn.innerText = "Enviando...";
-        btn.disabled = true;
+    let fileHandle;
+    let cronometro;
+    let segundos = 0;
+    let corriendo = false;
+    let modoTiempo = "1T"; 
+    
+    let nombreEscudoL = "madrid.png"; 
+    let nombreEscudoV = "dortmund.png";
+
+    function crearPenalesUI() {
+        const contenedorL = document.getElementById('p-local');
+        const contenedorV = document.getElementById('p-visitante');
+        for(let i=1; i<=5; i++) {
+            contenedorL.innerHTML += `<select id="pl_${i}"><option value="">-</option><option value="⚽">✓</option><option value="❌">❌</option></select>`;
+            contenedorV.innerHTML += `<select id="pv_${i}"><option value="">-</option><option value="⚽">✓</option><option value="❌">❌</option></select>`;
+        }
+    }
+    crearPenalesUI();
+
+    // Función para insertar los emojis de forma inteligente
+    function insertarEmoji(idTextArea, emoji) {
+        const txtArea = document.getElementById(idTextArea);
+        txtArea.value += " " + emoji;
+        txtArea.focus(); // Devuelve el foco al cuadro para seguir escribiendo rápido
+    }
+
+    document.getElementById('fileEscudoL').addEventListener('change', function(e) {
+        if(this.files[0]) nombreEscudoL = this.files[0].name;
+    });
+    document.getElementById('fileEscudoV').addEventListener('change', function(e) {
+        if(this.files[0]) nombreEscudoV = this.files[0].name;
+    });
+
+    function actualizarDisplay() {
+        let mins = Math.floor(segundos / 60);
+        let secs = segundos % 60;
+        let formateado = (mins < 10 ? "0" : "") + mins + ":" + (secs < 10 ? "0" : "") + secs;
+        document.getElementById('display-crono').innerText = formateado;
+    }
+
+    function iniciarCrono() {
+        if (corriendo) return;
+        corriendo = true;
+        cronometro = setInterval(() => {
+            segundos++;
+            actualizarDisplay();
+            guardarEnTXT(true); 
+        }, 1000);
+    }
+
+    function pausarCrono() {
+        clearInterval(cronometro);
+        corriendo = false;
+        guardarEnTXT();
+    }
+
+    function setTiempo(minutos, fase) {
+        pausarCrono();
+        segundos = minutos * 60;
+        modoTiempo = fase;
+        if(fase === 'ET') {
+            document.getElementById('display-crono').innerText = "ENTRETIEMPO";
+        } else {
+            actualizarDisplay();
+        }
+        guardarEnTXT();
+    }
+
+    function finalizarPartido() {
+        pausarCrono();
+        document.getElementById('display-crono').innerText = "FIN";
+        modoTiempo = "FIN";
+        guardarEnTXT();
+    }
+
+    async function vincularArchivo() {
+        try {
+            [fileHandle] = await window.showOpenFilePicker({
+                types: [{ description: 'Archivo de Texto', accept: { 'text/plain': ['.txt'] } }]
+            });
+            document.getElementById('btnFile').innerText = "✓ ARCHIVO VINCULADO";
+            document.getElementById('btnFile').style.background = "#00ff88";
+            const btnAct = document.getElementById('btnActualizar');
+            btnAct.disabled = false;
+            btnAct.style.background = "#00ff88";
+            btnAct.style.cursor = "pointer";
+        } catch (err) { alert("Archivo no seleccionado."); }
+    }
+
+    async function guardarEnTXT(silencioso = false) {
+        if (!fileHandle) return;
+
+        let txtTiempo = document.getElementById('display-crono').innerText;
+
+        let listaPL = [], listaPV = [];
+        for(let i=1; i<=5; i++) {
+            listaPL.push(document.getElementById(`pl_${i}`).value);
+            listaPV.push(document.getElementById(`pv_${i}`).value);
+        }
 
         const data = {
-            equipoL: document.getElementById('equipoL').value,
-            equipoV: document.getElementById('equipoV').value,
+            siglasL: document.getElementById('siglasL').value.toUpperCase(),
+            siglasV: document.getElementById('siglasV').value.toUpperCase(),
+            escudoL: "imagen/" + nombreEscudoL,
+            escudoV: "imagen/" + nombreEscudoV,
             golesL: document.getElementById('golesL').value,
             golesV: document.getElementById('golesV').value,
-            tiempo: document.getElementById('tiempo').value,
+            tiempo: txtTiempo,
+            fase: modoTiempo,
             sucesosL: document.getElementById('sucesosL').value.replace(/\n/g, '<br>'),
-            sucesosV: document.getElementById('sucesosV').value.replace(/\n/g, '<br>')
+            sucesosV: document.getElementById('sucesosV').value.replace(/\n/g, '<br>'),
+            verPenales: document.getElementById('mostrarPenales').checked,
+            penalesL: listaPL,
+            penalesV: listaPV
         };
 
         try {
-            // Usamos un almacenamiento temporal en la nube gratuito
-            await fetch(`https://api.jsonbin.io/v3/b`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Bin-Name': sala,
-                    'X-Collection-Id': '652300000000000000000000', // ID temporal público genérico
-                    'X-Bin-Private': 'false'
-                },
-                body: JSON.stringify(data)
-            });
-            
-            // Guardamos localmente el ID del "bin" para actualizar el mismo en vez de crear nuevos
-            // Para simplificar esta versión sin tokens, usaremos un servidor KV gratuito alternativo que no requiera cuentas:
-        } catch(e) {}
-
-        // ENFOQUE ULTRA-SIMPLE SIN REGISTROS (Usando KV de countapi o similar para retransmitir)
-        // Optamos por npoint.io que es perfecto para esto:
-        try {
-            await fetch(`https://api.npoint.io/e05b58be4af99580a520`, { // Usaremos una URL puente directa
-                method: 'POST',
-                body: JSON.stringify(data)
-            });
-            status.style.display = "block";
-            setTimeout(() => status.style.display = "none", 2000);
-        } catch (error) {
-            alert("Error al conectar con el servidor.");
-        }
-
-        btn.innerText = "ACTUALIZAR EN VIVO (OBS)";
-        btn.disabled = false;
+            const writable = await fileHandle.createWritable();
+            await writable.write(JSON.stringify(data));
+            await writable.close();
+            if(!silencioso) {
+                const status = document.getElementById('status');
+                status.innerText = "¡Marcador Actualizado!";
+                setTimeout(() => status.innerText = "", 1500);
+            }
+        } catch (e) {}
     }
 </script>
 
